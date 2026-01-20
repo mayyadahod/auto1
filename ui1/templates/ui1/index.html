@@ -1,0 +1,635 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoPlan AI | Next-Gen Architectural Intelligence</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            overflow-x: hidden;
+            background: #0a0a0a;
+            color: #fff;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --accent-cyan: #00d4ff;
+            --accent-purple: #667eea;
+            --dark-bg: #0a0a0a;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border-glass: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Glass Navbar */
+        .navbar {
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-glass);
+            padding: 1.2rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #667eea, #00d4ff);
+            -webkit-background-clip: text;
+            background-clip: text; /* أضيفي هذا السطر */
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            font-weight: 500;
+            margin: 0 1rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-cyan) !important;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-cyan);
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            background: radial-gradient(ellipse at top, #1a1a2e 0%, #0a0a0a 100%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: 5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, #667eea 50%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            background-clip: text; /* أضيفي هذا السطر */
+            -webkit-text-fill-color: transparent;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 3rem;
+            font-weight: 300;
+            animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        }
+
+        /* Floating Elements */
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.3;
+            animation: float 20s infinite;
+        }
+
+        .shape-1 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            top: 10%;
+            right: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape-2 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #00d4ff, #667eea);
+            bottom: 20%;
+            left: 5%;
+            animation-delay: 5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(50px, 50px) rotate(90deg); }
+            50% { transform: translate(0, 100px) rotate(180deg); }
+            75% { transform: translate(-50px, 50px) rotate(270deg); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Buttons */
+        .btn-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 1rem 3rem;
+            font-weight: 600;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 50px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-outline-glass {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 3rem;
+            font-weight: 600;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.1rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .btn-outline-glass:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            transform: translateY(-3px);
+        }
+
+        /* Feature Cards */
+        .feature-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            padding: 3rem 2rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px);
+            border-color: rgba(102, 126, 234, 0.5);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.2);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Step Cards */
+        .step-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .step-card:hover {
+            transform: scale(1.05);
+            border-color: var(--accent-cyan);
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea, #00d4ff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+        }
+
+        /* Dashboard Preview */
+        .dashboard-preview {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-glass);
+        }
+
+        .dashboard-preview img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .dashboard-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(0, 212, 255, 0.1));
+            pointer-events: none;
+        }
+
+        /* Stats Section */
+        .stats-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #00d4ff);
+            -webkit-background-clip: text;
+            background-clip: text; /* أضيفي هذا السطر */
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(10, 10, 10, 0.95);
+            border-top: 1px solid var(--border-glass);
+            padding: 4rem 0 2rem;
+        }
+
+        .social-icon {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 0.5rem;
+            transition: all 0.3s;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .social-icon:hover {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-color: transparent;
+            color: white;
+            transform: translateY(-5px);
+        }
+
+        /* Modal Styling */
+        .modal-content {
+            background: rgba(20, 20, 30, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            color: white;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 0.8rem 1.2rem;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-purple);
+            color: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 3rem;
+            }
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-cube me-2"></i>AutoPlan AI
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#how-it-works">How it Works</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#stats">Impact</a></li>
+                </ul>
+                <div class="d-flex gap-3">
+                    <button class="btn btn-outline-glass btn-sm px-4" data-bs-toggle="modal" data-bs-target="#loginModal">
+                        Sign In
+                    </button>
+                    <button class="btn btn-gradient btn-sm px-4" data-bs-toggle="modal" data-bs-target="#registerModal">
+                        Get Started
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero-section">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        
+        <div class="container hero-content">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="hero-title">Transform Blueprints Into Intelligence</h1>
+                    <p class="hero-subtitle">Convert architectural drawings into interactive 3D models with AI-powered precision. Built for engineers who demand excellence.</p>
+                    <div class="d-flex gap-3 flex-wrap">
+                        <button class="btn btn-gradient" data-bs-toggle="modal" data-bs-target="#registerModal">
+                            Start Free Trial <i class="fas fa-arrow-right ms-2"></i>
+                        </button>
+                        <a href="{% url 'editor_page' %}" class="btn btn-outline-glass">
+    <i class="fas fa-play me-2"></i> Watch Demo
+</a>
+                    </div>
+                </div>
+                <div class="col-lg-6 mt-5 mt-lg-0">
+                    <div class="dashboard-preview">
+                        <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&q=80&w=1200" alt="Dashboard">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="stats" class="py-5">
+        <div class="container py-5">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="stats-card">
+                        <div class="stat-number">99.8%</div>
+                        <p class="text-white-50 mt-2 mb-0">Detection Accuracy</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-card">
+                        <div class="stat-number">10x</div>
+                        <p class="text-white-50 mt-2 mb-0">Faster Processing</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-card">
+                        <div class="stat-number">5K+</div>
+                        <p class="text-white-50 mt-2 mb-0">Projects Completed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="py-5">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h2 class="display-4 fw-bold mb-3">Engineered for Excellence</h2>
+                <p class="text-white-50 fs-5">Cutting-edge AI meets architectural precision</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3 class="h4 fw-bold mb-3">YOLOv8 Vision AI</h3>
+                        <p class="text-white-50">State-of-the-art computer vision detects walls, doors, and windows with 99.8% accuracy in milliseconds.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-layer-group"></i>
+                        </div>
+                        <h3 class="h4 fw-bold mb-3">Real-Time Editing</h3>
+                        <p class="text-white-50">Interactive dashboard with live preview, drag-and-drop editing, and instant dimension calculations.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="h4 fw-bold mb-3">Enterprise Security</h3>
+                        <p class="text-white-50">Bank-level encryption, SOC 2 compliance, and dedicated cloud infrastructure protect your IP.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="py-5">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h2 class="display-4 fw-bold mb-3">From Upload to Export in 4 Steps</h2>
+                <p class="text-white-50 fs-5">Seamless workflow designed for efficiency</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <h4 class="fw-bold mb-3">Upload Blueprint</h4>
+                        <p class="text-white-50 mb-0">Drag & drop JPG, PNG, or PDF files up to 50MB</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <h4 class="fw-bold mb-3">AI Processing</h4>
+                        <p class="text-white-50 mb-0">Neural network analyzes every element in seconds</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <h4 class="fw-bold mb-3">Refine & Edit</h4>
+                        <p class="text-white-50 mb-0">Adjust dimensions, add notes, modify elements</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="step-card">
+                        <div class="step-number">4</div>
+                        <h4 class="fw-bold mb-3">Export Files</h4>
+                        <p class="text-white-50 mb-0">Download as DWG, PDF, or 3D model formats</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container py-5">
+            <div class="row align-items-center">
+                <div class="col-lg-6 order-lg-2">
+                    <h2 class="display-5 fw-bold mb-4">Lightning-Fast Performance</h2>
+                    <p class="fs-5 text-white-50 mb-4">Built on scalable cloud architecture with GPU acceleration. Process complex blueprints in under 10 seconds with precision area calculations and instant rendering.</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Sub-second response times</li>
+                        <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Parallel processing for large files</li>
+                        <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> 99.9% uptime guarantee</li>
+                    </ul>
+                    <button class="btn btn-gradient mt-3" data-bs-toggle="modal" data-bs-target="#registerModal">
+                        Start Your Project <i class="fas fa-rocket ms-2"></i>
+                    </button>
+                <div class="col-lg-6 order-lg-1 mt-5 mt-lg-0">
+    <div class="dashboard-preview">
+        <img src="{% static 'img/n.jpg' %}" 
+             alt="Performance Dashboard" 
+             class="img-fluid rounded-4 shadow-lg">
+    </div>
+</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Welcome Back</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-control" placeholder="you@company.com">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" placeholder="Enter your password">
+                        </div>
+                        <button type="submit" class="btn btn-gradient w-100 py-3 fw-bold">Sign In</button>
+                        <p class="text-center text-white-50 mt-3 mb-0 small">Don't have an account? <a href="#" class="text-decoration-none" style="color: var(--accent-cyan);">Sign up</a></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="registerModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Create Your Account</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control" placeholder="John Doe">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-control" placeholder="you@company.com">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" placeholder="Min. 8 characters">
+                        </div>
+                        <button type="submit" class="btn btn-gradient w-100 py-3 fw-bold">Create Account</button>
+                        <p class="text-center text-white-50 mt-3 mb-0 small">Already have an account? <a href="#" class="text-decoration-none" style="color: var(--accent-cyan);">Sign in</a></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h4 class="fw-bold mb-3" style="background: linear-gradient(135deg, #667eea, #00d4ff);
+                     -webkit-background-clip: text;
+                     background-clip: text; /* أضيفي هذا السطر */
+                      -webkit-text-fill-color: transparent;">AutoPlan AI</h4>
+                    <p class="text-white-50 mb-4">Empowering engineers with next-generation design tools</p>
+                    <div class="mb-4">
+                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-dribbble"></i></a>
+                    </div>
+                    <hr style="border-color: var(--border-glass); width: 50%; margin: 2rem auto;">
+                    <p class="text-white-50 small mb-0">© 2026 AutoPlan AI. Graduation Project  | All Rights Reserved</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

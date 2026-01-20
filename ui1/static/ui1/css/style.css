@@ -1,0 +1,23 @@
+:root { 
+    --primary-color: #2c3e50; 
+    --accent-color: #3498db; 
+}
+body { font-family: 'Segoe UI', sans-serif; }
+
+.hero-section { 
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                url('../img/hero-bg.jpg'); /* تأكدي من وضع صورة هنا لاحقاً */
+    height: 100vh; 
+    background-size: cover; 
+    display: flex; 
+    align-items: center; 
+    color: white; 
+}
+
+.feature-card {
+    transition: transform 0.3s;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.feature-card:hover { transform: translateY(-10px); }
+.feature-icon { font-size: 3rem; color: var(--accent-color); }

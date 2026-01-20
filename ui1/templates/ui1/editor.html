@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blueprint Editor | AutoPlan AI</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: #0a0a0a;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --accent-cyan: #00d4ff;
+            --accent-purple: #667eea;
+            --dark-bg: #0a0a0a;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border-glass: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-glass);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, #667eea, #00d4ff);
+            -webkit-background-clip: text;
+            background-clip: text; /* أضف هذا السطر هنا */
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Main Container */
+        .editor-container {
+            display: flex;
+            height: calc(100vh - 70px);
+            margin-top: 70px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 320px;
+            background: rgba(15, 15, 20, 0.95);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border-glass);
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--accent-purple);
+            border-radius: 10px;
+        }
+
+        .section-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .property-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            border-radius: 8px;
+            padding: 0.7rem 1rem;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-purple);
+            color: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-select option {
+            background: #1a1a2e;
+            color: white;
+        }
+
+        /* Canvas Area */
+        .canvas-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #0f0f14;
+        }
+
+        .canvas-toolbar {
+            background: rgba(15, 15, 20, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-glass);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .canvas-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            overflow: auto;
+        }
+
+        .blueprint-canvas {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            max-width: 100%;
+            max-height: 100%;
+            position: relative;
+        }
+
+        /* Buttons */
+        .btn-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 0.6rem 1.5rem;
+            font-weight: 600;
+            border-radius: 8px;
+            color: white;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-outline-glass {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            padding: 0.6rem 1.5rem;
+            font-weight: 500;
+            border-radius: 8px;
+            color: white;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .btn-outline-glass:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .btn-icon:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--accent-cyan);
+        }
+
+        .btn-icon.active {
+            background: var(--accent-purple);
+            border-color: var(--accent-purple);
+        }
+
+        /* Color Picker */
+        .color-picker-wrapper {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 2px solid var(--border-glass);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+
+        .color-option.active {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.3);
+        }
+
+        /* Detection Elements */
+        .detected-element {
+            position: absolute;
+            border: 2px solid;
+            background: rgba(102, 126, 234, 0.1);
+            cursor: move;
+            transition: all 0.2s;
+        }
+
+        .detected-element:hover {
+            background: rgba(102, 126, 234, 0.2);
+            z-index: 10;
+        }
+
+        .detected-element.selected {
+            border-color: #00d4ff;
+            box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.3);
+            z-index: 11;
+        }
+
+        .element-label {
+            position: absolute;
+            top: -25px;
+            left: 0;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        /* Stats Badge */
+        .stats-badge {
+            background: var(--card-bg);
+            border: 1px solid var(--border-glass);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stats-badge i {
+            color: var(--accent-cyan);
+        }
+
+        /* Toast Notification */
+        .toast-container {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .custom-toast {
+            background: rgba(20, 20, 30, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            color: white;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar fixed-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-cube me-2"></i>AutoPlan AI
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <span class="stats-badge">
+                    <i class="fas fa-layer-group"></i>
+                    <span id="elementCount">0 Elements</span>
+                </span>
+                <button class="btn btn-outline-glass btn-sm" onclick="resetCanvas()">
+                    <i class="fas fa-undo me-2"></i>Reset
+                </button>
+                <button class="btn btn-gradient btn-sm" onclick="saveBlueprint()">
+                    <i class="fas fa-save me-2"></i>Save Changes
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="editor-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h5 class="section-title">Blueprint Properties</h5>
+            
+            <div class="property-card">
+                <h6 class="mb-3 fw-bold">General Settings</h6>
+                
+                <div class="mb-3">
+                    <label class="form-label">Project Name</label>
+                    <input type="text" class="form-control" id="projectName" value="Residential Plan A1" placeholder="Enter project name">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Scale</label>
+                    <select class="form-select" id="scale">
+                        <option value="1:50">1:50</option>
+                        <option value="1:100" selected>1:100</option>
+                        <option value="1:200">1:200</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Total Area (m²)</label>
+                    <input type="number" class="form-control" id="totalArea" value="120.5" placeholder="Total area">
+                </div>
+            </div>
+
+            <div class="property-card">
+                <h6 class="mb-3 fw-bold">Element Properties</h6>
+                
+                <div class="mb-3">
+                    <label class="form-label">Selected Element</label>
+                    <input type="text" class="form-control" id="selectedElement" value="None" readonly>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Element Type</label>
+                    <select class="form-select" id="elementType">
+                        <option value="wall">Wall</option>
+                        <option value="door">Door</option>
+                        <option value="window">Window</option>
+                        <option value="room">Room</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Width (m)</label>
+                    <input type="number" class="form-control" id="elementWidth" value="0" step="0.1" placeholder="Width">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Height (m)</label>
+                    <input type="number" class="form-control" id="elementHeight" value="0" step="0.1" placeholder="Height">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Color</label>
+                    <div class="color-picker-wrapper">
+                        <div class="color-option" style="background: #667eea;" data-color="#667eea" onclick="selectColor(this)"></div>
+                        <div class="color-option active" style="background: #00d4ff;" data-color="#00d4ff" onclick="selectColor(this)"></div>
+                        <div class="color-option" style="background: #ff6b6b;" data-color="#ff6b6b" onclick="selectColor(this)"></div>
+                        <div class="color-option" style="background: #4ecdc4;" data-color="#4ecdc4" onclick="selectColor(this)"></div>
+                        <div class="color-option" style="background: #ffe66d;" data-color="#ffe66d" onclick="selectColor(this)"></div>
+                        <div class="color-option" style="background: #95e1d3;" data-color="#95e1d3" onclick="selectColor(this)"></div>
+                    </div>
+                </div>
+
+                <button class="btn btn-gradient w-100 mt-3" onclick="applyChanges()">
+                    <i class="fas fa-check me-2"></i>Apply Changes
+                </button>
+                
+                <button class="btn btn-outline-glass w-100 mt-2" onclick="deleteElement()">
+                    <i class="fas fa-trash me-2"></i>Delete Element
+                </button>
+            </div>
+
+            <div class="property-card">
+                <h6 class="mb-3 fw-bold">Export Options</h6>
+                
+                <button class="btn btn-outline-glass w-100 mb-2" onclick="exportPDF()">
+                    <i class="fas fa-file-pdf me-2"></i>Export as PDF
+                </button>
+                
+                <button class="btn btn-outline-glass w-100" onclick="exportDWG()">
+                    <i class="fas fa-file-code me-2"></i>Export as DWG
+                </button>
+            </div>
+        </div>
+
+        <!-- Canvas Area -->
+        <div class="canvas-area">
+            <div class="canvas-toolbar">
+                <div class="d-flex gap-2">
+                    <button class="btn-icon" id="selectTool" onclick="selectTool('select')" title="Select">
+                        <i class="fas fa-mouse-pointer"></i>
+                    </button>
+                    <button class="btn-icon" onclick="selectTool('pan')" title="Pan">
+                        <i class="fas fa-hand-paper"></i>
+                    </button>
+                    <button class="btn-icon" onclick="zoomIn()" title="Zoom In">
+                        <i class="fas fa-search-plus"></i>
+                    </button>
+                    <button class="btn-icon" onclick="zoomOut()" title="Zoom Out">
+                        <i class="fas fa-search-minus"></i>
+                    </button>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button class="btn-icon" onclick="addWall()" title="Add Wall">
+                        <i class="fas fa-grip-lines"></i>
+                    </button>
+                    <button class="btn-icon" onclick="addDoor()" title="Add Door">
+                        <i class="fas fa-door-open"></i>
+                    </button>
+                    <button class="btn-icon" onclick="addWindow()" title="Add Window">
+                        <i class="fas fa-border-all"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="canvas-wrapper" id="canvasWrapper">
+                <div class="blueprint-canvas" id="blueprintCanvas">
+                    <img src="https://images.unsplash.com/photo-1503387762-592dea58ef23?auto=format&fit=crop&q=80&w=800" 
+                         alt="Blueprint" 
+                         style="display: block; width: 800px; height: 600px; object-fit: cover; border-radius: 12px;">
+                    
+                    <!-- Sample detected elements -->
+                    <div class="detected-element" style="border-color: #667eea; left: 50px; top: 100px; width: 200px; height: 10px;" data-type="wall" data-id="1">
+                        <span class="element-label">Wall - 5.2m</span>
+                    </div>
+                    <div class="detected-element" style="border-color: #00d4ff; left: 100px; top: 150px; width: 60px; height: 120px;" data-type="door" data-id="2">
+                        <span class="element-label">Door - 0.9m</span>
+                    </div>
+                    <div class="detected-element" style="border-color: #4ecdc4; left: 300px; top: 105px; width: 100px; height: 80px;" data-type="window" data-id="3">
+                        <span class="element-label">Window - 1.5m</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+
+    <script>
+        let selectedElement = null;
+        let currentColor = '#00d4ff';
+        let zoom = 1;
+        let elementIdCounter = 4;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateElementCount();
+            attachElementListeners();
+            document.getElementById('selectTool').classList.add('active');
+        });
+
+        // Attach listeners to detected elements
+        function attachElementListeners() {
+            document.querySelectorAll('.detected-element').forEach(element => {
+                element.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    selectElement(this);
+                });
+            });
+        }
+
+        // Select element
+        function selectElement(element) {
+            if (selectedElement) {
+                selectedElement.classList.remove('selected');
+            }
+            selectedElement = element;
+            element.classList.add('selected');
+            
+            const type = element.getAttribute('data-type');
+            const width = parseFloat(element.style.width) / 100; // Convert to meters
+            const height = parseFloat(element.style.height) / 100;
+            
+            document.getElementById('selectedElement').value = type.charAt(0).toUpperCase() + type.slice(1) + ' #' + element.getAttribute('data-id');
+            document.getElementById('elementType').value = type;
+            document.getElementById('elementWidth').value = width.toFixed(1);
+            document.getElementById('elementHeight').value = height.toFixed(1);
+        }
+
+        // Deselect on canvas click
+        document.getElementById('blueprintCanvas').addEventListener('click', function(e) {
+            if (e.target === this || e.target.tagName === 'IMG') {
+                if (selectedElement) {
+                    selectedElement.classList.remove('selected');
+                    selectedElement = null;
+                    document.getElementById('selectedElement').value = 'None';
+                }
+            }
+        });
+
+        // Apply changes to selected element
+        function applyChanges() {
+            if (!selectedElement) {
+                showToast('Please select an element first', 'warning');
+                return;
+            }
+            
+            const width = parseFloat(document.getElementById('elementWidth').value) * 100;
+            const height = parseFloat(document.getElementById('elementHeight').value) * 100;
+            
+            selectedElement.style.width = width + 'px';
+            selectedElement.style.height = height + 'px';
+            selectedElement.style.borderColor = currentColor;
+            
+            showToast('Changes applied successfully!', 'success');
+        }
+
+        // Delete element
+        function deleteElement() {
+            if (!selectedElement) {
+                showToast('Please select an element first', 'warning');
+                return;
+            }
+            
+            selectedElement.remove();
+            selectedElement = null;
+            document.getElementById('selectedElement').value = 'None';
+            updateElementCount();
+            showToast('Element deleted', 'success');
+        }
+
+        // Color selection
+        function selectColor(element) {
+            document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
+            element.classList.add('active');
+            currentColor = element.getAttribute('data-color');
+        }
+
+        // Add new elements
+        function addWall() {
+            addElement('wall', 200, 10, '#667eea');
+        }
+
+        function addDoor() {
+            addElement('door', 60, 120, '#00d4ff');
+        }
+
+        function addWindow() {
+            addElement('window', 100, 80, '#4ecdc4');
+        }
+
+        function addElement(type, width, height, color) {
+            const canvas = document.getElementById('blueprintCanvas');
+            const element = document.createElement('div');
+            element.className = 'detected-element';
+            element.style.borderColor = color;
+            element.style.left = '100px';
+            element.style.top = '100px';
+            element.style.width = width + 'px';
+            element.style.height = height + 'px';
+            element.setAttribute('data-type', type);
+            element.setAttribute('data-id', elementIdCounter++);
+            
+            const label = document.createElement('span');
+            label.className = 'element-label';
+            label.textContent = type.charAt(0).toUpperCase() + type.slice(1) + ' - New';
+            element.appendChild(label);
+            
+            element.addEventListener('click', function(e) {
+                e.stopPropagation();
+                selectElement(this);
+            });
+            
+            canvas.appendChild(element);
+            updateElementCount();
+            showToast(type.charAt(0).toUpperCase() + type.slice(1) + ' added', 'success');
+        }
+
+        // Tool selection
+        function selectTool(tool) {
+            document.querySelectorAll('.btn-icon').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        // Zoom functions
+        function zoomIn() {
+            zoom = Math.min(zoom + 0.1, 2);
+            applyZoom();
+        }
+
+        function zoomOut() {
+            zoom = Math.max(zoom - 0.1, 0.5);
+            applyZoom();
+        }
+
+        function applyZoom() {
+            document.getElementById('blueprintCanvas').style.transform = `scale(${zoom})`;
+        }
+
+        // Update element count
+        function updateElementCount() {
+            const count = document.querySelectorAll('.detected-element').length;
+            document.getElementById('elementCount').textContent = count + ' Element' + (count !== 1 ? 's' : '');
+        }
+
+        // Save blueprint
+        function saveBlueprint() {
+            const projectData = {
+                name: document.getElementById('projectName').value,
+                scale: document.getElementById('scale').value,
+                area: document.getElementById('totalArea').value,
+                elements: Array.from(document.querySelectorAll('.detected-element')).map(el => ({
+                    type: el.getAttribute('data-type'),
+                    id: el.getAttribute('data-id'),
+                    left: el.style.left,
+                    top: el.style.top,
+                    width: el.style.width,
+                    height: el.style.height,
+                    color: el.style.borderColor
+                })),
+                timestamp: new Date().toISOString()
+            };
+            
+            console.log('Saving project:', projectData);
+            showToast('Blueprint saved successfully!', 'success');
+        }
+
+        // Reset canvas
+        function resetCanvas() {
+            if (confirm('Are you sure you want to reset? All changes will be lost.')) {
+                location.reload();
+            }
+        }
+
+        // Export functions
+        function exportPDF() {
+            showToast('Exporting to PDF...', 'info');
+            setTimeout(() => {
+                showToast('PDF exported successfully!', 'success');
+            }, 1500);
+        }
+
+        function exportDWG() {
+            showToast('Exporting to DWG...', 'info');
+            setTimeout(() => {
+                showToast('DWG file ready for download!', 'success');
+            }, 1500);
+        }
+
+        // Toast notification
+        function showToast(message, type = 'info') {
+            const container = document.querySelector('.toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'custom-toast mb-2';
+            
+            const icons = {
+                success: 'check-circle',
+                warning: 'exclamation-triangle',
+                info: 'info-circle'
+            };
+            
+            const colors = {
+                success: '#4ecdc4',
+                warning: '#ffe66d',
+                info: '#00d4ff'
+            };
+            
+            toast.innerHTML = `
+                <div class="d-flex align-items-center gap-2">
+                    <i class="fas fa-${icons[type]}" style="color: ${colors[type]}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100px)';
+                toast.style.transition = 'all 0.3s';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
